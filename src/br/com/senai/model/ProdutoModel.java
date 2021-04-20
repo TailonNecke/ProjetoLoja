@@ -2,7 +2,7 @@ package br.com.senai.model;
 
 public class ProdutoModel {
 
-	// Atributos
+	// 
 	private String nomeDoProduto;
 	private double precoDoProduto;
 	private int quantidadeDeProduto;
