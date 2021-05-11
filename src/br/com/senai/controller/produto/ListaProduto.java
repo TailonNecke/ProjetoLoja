@@ -1,23 +1,42 @@
 package br.com.senai.controller.produto;
 
-import java.util.List;
+import java.sql.Connection;
+import java.sql.ResultSet;
 
-import br.com.senai.model.ProdutoModel;
+import java.sql.PreparedStatement;
+
+import br.com.dao.DataBaseConnection;
 
 public class ListaProduto {
-	public List<ProdutoModel> listarProdutos(List<ProdutoModel> produtos) {
-		System.out.println("\n----- PRODUTOS CADASTRASDOS -----\n");
-		System.out.printf("| %2s | %10s | %8s | %4s | %9s |\n", "ID", "Produto", "Preço", "Qtd", "R$ Total");
-		
-		produtos.forEach(produto -> {
-			System.out.printf("| %2s | %10s | R$%6.2f | %4s | R$%9.2f |\n",
-					produtos.indexOf(produto) + 1,
-					produto.getNomeDoProduto(),
-					produto.getPrecoDoProduto(),
-					produto.getQuantidadeDeProduto(),
-					produto.getSaldoEmEstoque());
-		});
-		
-		return produtos;
+	
+	private Connection connection;
+	
+	public ListaProduto() {
+	connection = DataBaseConnection.getInstance().getConnection();
 	}
+
+	public ResultSet listarProdutos() {
+		PreparedStatement preparedStatement;
+		try {
+			preparedStatement = connection.prepareStatement("select * from produto");
+			ResultSet resultSet = preparedStatement.executeQuery();
+			
+			System.out.println("\n----- PRODUTOS CADASTRASDOS -----\n");
+			System.out.printf("| %2s | %30s | %8s | %4s | %9s |\n", "ID", "Produto", "Preço", "Qtd", "R$ Total");
+			
+			while(resultSet.next()) {
+				System.out.printf("| %2s | %30s | R$%6.2f | %4s | %9s |\n",
+						resultSet.getInt("codigoDoProduto"),
+						resultSet.getString("nomeDoProduto"),
+						resultSet.getDouble("precoDoProduto"),
+						resultSet.getInt("quantidadeDeProduto"),
+						resultSet.getDouble("saldoEmEstoque"));
+			}
+			return resultSet;
+		} catch (Exception e) {
+			return null;
+		}
+		
+	}
+	
 }
