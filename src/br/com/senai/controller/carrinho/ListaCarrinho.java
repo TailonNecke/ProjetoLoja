@@ -1,32 +1,79 @@
 package br.com.senai.controller.carrinho;
 
-import java.util.List;
+import java.sql.Connection;
+import java.sql.ResultSet;
 
-import br.com.senai.model.CarrinhoModel;
+import java.sql.PreparedStatement;
 
+import br.com.dao.DataBaseConnection;
 public class ListaCarrinho {
-public List<CarrinhoModel> listarItensNoCarrinho(List<CarrinhoModel> itensNoCarrinho) {
-		
-		System.out.println("--- ITENS NO CARRINHO ---");
-		System.out.printf("| %2s | %10s | %8s | %4s | %9s |\n", "ID", "Produto", "Preço", "Qtd", "R$ Total");
-		
-		if(itensNoCarrinho.size() <= 0) {
+	Connection connection;
+	public ListaCarrinho() {
+		connection = DataBaseConnection.getInstance().getConnection();
+		}
+	public ResultSet listarItensNoCarrinho() {
+		PreparedStatement preparedStatement;
+		try {
+			String sql = "select * from produto";
+			preparedStatement = connection.prepareStatement("select * from itens_carrinho");
+			ResultSet resultSet = preparedStatement.executeQuery(sql);
+			
+			if(!resultSet.next()) {
+				System.out.println("Não possui itens no carrinho");
+				return null;
+			}
+			
+			System.out.println("\n----- PRODUTOS NO CARRINHO -----\n");
+			System.out.printf("| %2s | %30s | %8s | %4s | %9s |\n", "ID", "Produto", "Preço", "Qtd", "R$ Total");
+						
+			resultSet.previous();
+			
+			while(resultSet.next()) {
+				System.out.printf("| %2s | %30s | R$%6.2f | %4s | %9s |\n",
+						resultSet.getInt("codigoDoProduto"),
+						resultSet.getString("nomeDoProduto"),
+						resultSet.getDouble("precoDoProduto"),
+						resultSet.getInt("quantidadeDeProduto"),
+						resultSet.getDouble("saldoEmEstoque"));
+			}
+			return resultSet;
+		} catch (Exception e) {
 			return null;
 		}
-		
-		itensNoCarrinho.forEach(item -> {
-			System.out.printf("| %2s | %10s | R$%6.2f | %4s | R$%7.2f |\n",item.getIdDoProduto(), item.getProdutoModel().getNomeDoProduto(), item.getProdutoModel().getPrecoDoProduto(), item.getQuantidadeDeItensNoCarrinho(), item.getValorTotalPorItem());
-		});
-		
-		double valorTotalDocarrinho = itensNoCarrinho.stream().mapToDouble(CarrinhoModel::getValorTotalPorItem).sum();
-		System.out.println("Valor total: R$" + valorTotalDocarrinho);
-		
-		return itensNoCarrinho;
 	}
-public void gerarCupom(List<CarrinhoModel> itensNoCarrinho, String cliente) {
-	ListaCarrinho listaCarrinho = new ListaCarrinho();
-	
-	listaCarrinho.listarItensNoCarrinho(itensNoCarrinho);
-	System.out.println("Cliente: " + cliente);
-}
+	public ResultSet gerarCupom(int id) {
+		PreparedStatement preparedStatement = null;
+		try {
+			String sql = "select * from itens_carrinho where Cod_Cliente = ?";
+			preparedStatement.setInt(1, id);
+			preparedStatement = connection.prepareStatement("select * from itens_carrinho");
+			ResultSet resultSet = preparedStatement.executeQuery(sql);
+			
+			if(!resultSet.next()) {
+				System.out.println("Não possui itens no carrinho");
+				return null;
+			}
+			String sql2 = "select nome from cliente where Cod_Cliente = ?";
+			preparedStatement.setInt(1, id);
+			preparedStatement = connection.prepareStatement("select * from itens_carrinho");
+			ResultSet resultSet2 = preparedStatement.executeQuery(sql2);
+			System.out.println("Cliente: " + resultSet2.getString("nome"));
+			System.out.println("\n----- CUPOM -----\n");
+			System.out.printf("| %2s | %30s | %8s | %4s | %9s |\n", "ID", "Produto", "Preço", "Qtd", "R$ Total");
+						
+			resultSet.previous();
+			
+			while(resultSet.next()) {
+				System.out.printf("| %2s | %30s | R$%6.2f | %4s | %9s |\n",
+						resultSet.getInt("codigoDoProduto"),
+						resultSet.getString("nomeDoProduto"),
+						resultSet.getDouble("precoDoProduto"),
+						resultSet.getInt("quantidadeDeProduto"),
+						resultSet.getDouble("saldoEmEstoque"));
+			}
+			return resultSet;
+		} catch (Exception e) {
+			return null;
+		}
+	}
 }

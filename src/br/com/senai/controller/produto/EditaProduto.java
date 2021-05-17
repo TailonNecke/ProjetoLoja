@@ -1,6 +1,5 @@
 package br.com.senai.controller.produto;
 
-import java.util.List;
 import java.util.Scanner;
 
 import java.sql.PreparedStatement;
@@ -20,7 +19,7 @@ public class EditaProduto {
 		connection = DataBaseConnection.getInstance().getConnection();
 	}
 	
-	public ProdutoModel editarProduto(List<ProdutoModel> produtos) {
+	public ProdutoModel editarProduto() {
 		PreparedStatement preparedStatement;
 		
 		ProdutoModel produto = new ProdutoModel();

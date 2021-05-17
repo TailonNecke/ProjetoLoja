@@ -15,7 +15,7 @@ import br.com.senai.model.CarrinhoModel;
 import br.com.senai.model.ProdutoModel;
 
 public class ProgramaPrincipal {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		List<ProdutoModel> produtos = new ArrayList<ProdutoModel>();
 		List<CarrinhoModel> itensNoCarrinho = new ArrayList<CarrinhoModel>();
 		
@@ -30,7 +30,7 @@ public class ProgramaPrincipal {
 		
 		boolean sair = false;
 
-		String cliente = adicionaCliente.definirCliente();
+		int id = adicionaCliente.definirCliente();
 		
 		do {
 			produtoController.menu();
@@ -44,19 +44,19 @@ public class ProgramaPrincipal {
 				listaProduto.listarProdutos();
 				break;
 			case 3:
-				editaProduto.editarProduto(produtos);
+				editaProduto.editarProduto();
 				break;
 			case 4:
-				deletaProduto.removerProduto(produtos);
+				deletaProduto.removerProduto();
 				break;
 			case 5:
-				itensNoCarrinho.add(adiciornarItemNoCarrinho.cadastrarItemNoCarrinho(produtos));
+				itensNoCarrinho.add(adiciornarItemNoCarrinho.cadastrarItemNoCarrinho(id));
 				break;
 			case 6:
-				listaCarrinho.listarItensNoCarrinho(itensNoCarrinho);
+				listaCarrinho.listarItensNoCarrinho();
 				break;
 			case 7:
-				listaCarrinho.gerarCupom(itensNoCarrinho, cliente);
+				listaCarrinho.gerarCupom(id);
 				break;
 			case 9:
 				sair = true;

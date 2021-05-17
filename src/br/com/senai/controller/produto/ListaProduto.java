@@ -20,7 +20,7 @@ public class ListaProduto {
 		try {
 			String sql = "select * from produto";
 			preparedStatement = connection.prepareStatement("select * from produto");
-			ResultSet resultSet = preparedStatement.executeQuery();
+			ResultSet resultSet = preparedStatement.executeQuery(sql);
 			
 			if(!resultSet.next()) {
 				System.out.println("Não possui dados cadastrados");
@@ -46,5 +46,6 @@ public class ListaProduto {
 		}
 		
 	}
+
 	
 }
