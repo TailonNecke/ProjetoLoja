@@ -18,8 +18,8 @@ public class ListaProduto {
 	public ResultSet listarProdutos() {
 		PreparedStatement preparedStatement;
 		try {
-			String sql = "select * from produto";
-			preparedStatement = connection.prepareStatement("select * from produto");
+			String sql = "select * from produtos";
+			preparedStatement = connection.prepareStatement(sql);
 			ResultSet resultSet = preparedStatement.executeQuery(sql);
 			
 			if(!resultSet.next()) {

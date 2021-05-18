@@ -16,7 +16,7 @@ public class DeletaProduto {
 public boolean verificaSeExisteProduto(int idDoProduto) {
 	PreparedStatement preparedStatement;
 	try {
-		String sql = "SELECT * FROM produto WHERE codigoDoProduto = ?";
+		String sql = "SELECT * FROM produtos WHERE codigoDoProduto = ?";
 		preparedStatement = connection.prepareStatement(sql);
 		preparedStatement.setInt(1, idDoProduto);
 		
@@ -54,7 +54,7 @@ public boolean verificaSeExisteProduto(int idDoProduto) {
 				return;
 			}
 			
-			String sql = "DELETE FROM produto WHERE codigoDoProduto = ?";
+			String sql = "DELETE FROM produtos WHERE codigoDoProduto = ?";
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, idDoProduto);
 			preparedStatement.execute();

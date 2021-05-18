@@ -29,7 +29,7 @@ public class CadastraProduto {
 		produtoModel.setSaldoEmEstoque(produtoModel.getQuantidadeDeProduto() * produtoModel.getPrecoDoProduto());
 		
 		try {
-			String sql = "INSERT INTO produto (nomeDoProduto, precoDoProduto, quantidadeDeProduto, saldoEmEstoque)"
+			String sql = "INSERT INTO produtos (nomeDoProduto, precoDoProduto, quantidadeDeProduto, saldoEmEstoque)"
 					+ " VALUES(?, ?, ?, ?)";
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			

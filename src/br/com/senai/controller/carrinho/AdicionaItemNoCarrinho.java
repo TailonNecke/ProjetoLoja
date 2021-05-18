@@ -35,7 +35,7 @@ public class AdicionaItemNoCarrinho {
 		
 		idDoProduto = entrada.nextInt();
 		try {
-			String sql = "SELECT * FROM produto WHERE codigoDoProduto = ?";
+			String sql = "SELECT * FROM produtos WHERE codigoDoProduto = ?";
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, idDoProduto);
 			
@@ -76,7 +76,7 @@ public class AdicionaItemNoCarrinho {
 			
 			preparedStatement1.execute();
 			
-			String sql2 = "UPDATE produto SET quantidadeDeProduto = ?, saldoEmEstoque = ?"
+			String sql2 = "UPDATE produtos SET quantidadeDeProduto = ?, saldoEmEstoque = ?"
 					+ " WHERE codigoDoProduto = ?";
 			preparedStatement = connection.prepareStatement(sql2);
 			

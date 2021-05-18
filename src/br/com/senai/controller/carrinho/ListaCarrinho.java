@@ -11,12 +11,14 @@ public class ListaCarrinho {
 	public ListaCarrinho() {
 		connection = DataBaseConnection.getInstance().getConnection();
 		}
-	public ResultSet listarItensNoCarrinho() {
+	public ResultSet listarItensNoCarrinho(int id) {
 		PreparedStatement preparedStatement;
 		try {
-			String sql = "select * from produto";
-			preparedStatement = connection.prepareStatement("select * from itens_carrinho");
-			ResultSet resultSet = preparedStatement.executeQuery(sql);
+			System.out.println(id);
+			String sql = "select * from itens_carrinho where Cod_Cliente = ?";
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, id);
+			ResultSet resultSet = preparedStatement.executeQuery();
 			
 			if(!resultSet.next()) {
 				System.out.println("Não possui itens no carrinho");
@@ -38,25 +40,27 @@ public class ListaCarrinho {
 			}
 			return resultSet;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}
 	public ResultSet gerarCupom(int id) {
 		PreparedStatement preparedStatement = null;
+		PreparedStatement preparedStatement2 = null;
 		try {
 			String sql = "select * from itens_carrinho where Cod_Cliente = ?";
+			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, id);
-			preparedStatement = connection.prepareStatement("select * from itens_carrinho");
-			ResultSet resultSet = preparedStatement.executeQuery(sql);
+			ResultSet resultSet = preparedStatement.executeQuery();
 			
 			if(!resultSet.next()) {
 				System.out.println("Não possui itens no carrinho");
 				return null;
 			}
-			String sql2 = "select nome from cliente where Cod_Cliente = ?";
-			preparedStatement.setInt(1, id);
-			preparedStatement = connection.prepareStatement("select * from itens_carrinho");
-			ResultSet resultSet2 = preparedStatement.executeQuery(sql2);
+			String sql2 = "select nome from clientes where Cod_Cliente = ?";
+			preparedStatement2.setInt(1, id);
+			preparedStatement2 = connection.prepareStatement(sql2);
+			ResultSet resultSet2 = preparedStatement2.executeQuery();
 			System.out.println("Cliente: " + resultSet2.getString("nome"));
 			System.out.println("\n----- CUPOM -----\n");
 			System.out.printf("| %2s | %30s | %8s | %4s | %9s |\n", "ID", "Produto", "Preço", "Qtd", "R$ Total");
@@ -70,6 +74,10 @@ public class ListaCarrinho {
 						resultSet.getDouble("precoDoProduto"),
 						resultSet.getInt("quantidadeDeProduto"),
 						resultSet.getDouble("saldoEmEstoque"));
+				 sql = "DELETE FROM itens_carrinho WHERE Cod_Cliente = ?";
+				preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setInt(1, id);
+				preparedStatement.execute();
 			}
 			return resultSet;
 		} catch (Exception e) {

@@ -53,7 +53,7 @@ public class ProgramaPrincipal {
 				itensNoCarrinho.add(adiciornarItemNoCarrinho.cadastrarItemNoCarrinho(id));
 				break;
 			case 6:
-				listaCarrinho.listarItensNoCarrinho();
+				listaCarrinho.listarItensNoCarrinho(id);
 				break;
 			case 7:
 				listaCarrinho.gerarCupom(id);

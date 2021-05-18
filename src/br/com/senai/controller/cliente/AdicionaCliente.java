@@ -21,7 +21,7 @@ private Connection connection;
 		
 		System.out.print("Informe o nome do cliente: ");
 		String nome = entrada.next();
-		String sql = "SELECT * FROM cliente WHERE nome = ?";
+		String sql = "SELECT * FROM clientes WHERE nome = ?";
 		preparedStatement = connection.prepareStatement(sql);
 		preparedStatement.setString(1, nome);
 		
@@ -29,7 +29,7 @@ private Connection connection;
 		
 		if(!resultSet.next()) {
 			try {
-				sql = "INSERT INTO cliente (nome)"
+				sql = "INSERT INTO clientes (nome)"
 						+ " VALUES(?)";
 				preparedStatement1 = connection.prepareStatement(sql);
 				
@@ -38,7 +38,7 @@ private Connection connection;
 				preparedStatement1.execute();
 				return resultSet.getInt("cod_cliente");
 			} catch (Exception e) {
-				return 0;
+				return resultSet.getInt("cod_cliente");
 			}
 		
 		} else {
