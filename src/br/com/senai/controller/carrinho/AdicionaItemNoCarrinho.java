@@ -9,6 +9,7 @@ import br.com.senai.model.CarrinhoModel;
 import br.com.senai.model.ProdutoModel;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Connection;
 
 public class AdicionaItemNoCarrinho {
@@ -21,11 +22,11 @@ public class AdicionaItemNoCarrinho {
 		connection = DataBaseConnection.getInstance().getConnection();
 	}
 	
-	public CarrinhoModel cadastrarItemNoCarrinho(int idCliente){
+	public CarrinhoModel cadastrarItemNoCarrinho(int idCliente) throws SQLException{
 		PreparedStatement preparedStatement;
 		ProdutoModel produto = new ProdutoModel();
 		ListaProduto listaProduto = new ListaProduto();
-		int idDoProduto, indexDoCampo;
+		int idDoProduto;
 		
 		if(listaProduto.listarProdutos() == null) {
 			return null;
@@ -49,44 +50,81 @@ public class AdicionaItemNoCarrinho {
 				produto.setNomeDoProduto(resultSet.getString("nomeDoProduto"));
 				produto.setPrecoDoProduto(resultSet.getDouble("precoDoProduto"));
 				produto.setQuantidadeDeProduto(resultSet.getInt("quantidadeDeProduto"));
-		
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
-		System.out.print("Informe a quantidade de itens que deseja adicionar");
+		System.out.print("Informe a quantidade de itens que deseja adicionar:");
 		int qtd = entrada.nextInt();
 		if(qtd > produto.getQuantidadeDeProduto()) {
 			System.out.println("Não possui itens suficientes no estoque");
 			return null;
 		}
+		String sql2 = "SELECT * FROM itens_carrinho WHERE codigoDoProduto = ? and Cod_Cliente = ? ";
+		preparedStatement = connection.prepareStatement(sql2);
+		preparedStatement.setInt(1, idDoProduto);
+		preparedStatement.setInt(2, idCliente);
 		
-		try {
-			String sql = "INSERT INTO itens_carrinho (codigoDoProduto, nomeDoProduto, precoDoProduto, quantidadeDeProduto, saldoEmEstoque, Cod_Cliente)"
-					+ " VALUES(?, ?, ?, ?, ?, ?)";
-			PreparedStatement preparedStatement1 = connection.prepareStatement(sql);
+		ResultSet resultSet = preparedStatement.executeQuery();
+		
+		if(resultSet.next()) {
+			int qtda = resultSet.getInt("quantidadeDeProduto");
+			Double see = resultSet.getDouble("saldoEmEstoque");
 			
-			preparedStatement1.setInt(1, idDoProduto);
-			preparedStatement1.setString(2, produto.getNomeDoProduto());
-			preparedStatement1.setDouble(3, produto.getPrecoDoProduto());
-			preparedStatement1.setInt(4, qtd);
-			preparedStatement1.setDouble(5, qtd * produto.getPrecoDoProduto());
-			preparedStatement1.setDouble(6, idCliente);
-			
-			preparedStatement1.execute();
-			
-			String sql2 = "UPDATE produtos SET quantidadeDeProduto = ?, saldoEmEstoque = ?"
-					+ " WHERE codigoDoProduto = ?";
-			preparedStatement = connection.prepareStatement(sql2);
-			
-			preparedStatement.setInt(1, produto.getQuantidadeDeProduto() - qtd);
-			preparedStatement.setDouble(2, produto.getPrecoDoProduto()*(produto.getQuantidadeDeProduto() - qtd));
-			preparedStatement.setInt(3, idDoProduto);
-			
-			preparedStatement.execute();
-		} catch (Exception e) {
-			System.out.println("erro ao transferir itens ao carrinho.");
+			try {
+				System.out.println(qtda + ", " + see);
+				String sql = "UPDATE itens_carrinho SET quantidadeDeProduto = ? , saldoEmEstoque = ? WHERE codigoDoProduto = ? and Cod_Cliente = ?";
+				PreparedStatement preparedStatement1 = connection.prepareStatement(sql);
+				
+				preparedStatement1.setInt(1,qtda + qtd);
+				preparedStatement1.setDouble(2, see + (qtd * produto.getPrecoDoProduto()) );
+				preparedStatement1.setInt(3, idDoProduto);
+				preparedStatement1.setInt(4, idCliente);
+				
+				preparedStatement1.execute();
+				
+				String sql3 = "UPDATE produtos SET quantidadeDeProduto = ?, saldoEmEstoque = ?"
+						+ " WHERE codigoDoProduto = ?";
+				preparedStatement = connection.prepareStatement(sql3);
+				
+				preparedStatement.setInt(1, produto.getQuantidadeDeProduto() - qtd);
+				preparedStatement.setDouble(2, produto.getPrecoDoProduto()*(produto.getQuantidadeDeProduto() - qtd));
+				preparedStatement.setInt(3, idDoProduto);
+				
+				preparedStatement.execute();
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("erro ao transferir itens ao carrinho.");
+			}	
+		}else {
+			try {
+				String sql = "INSERT INTO itens_carrinho (codigoDoProduto, nomeDoProduto, precoDoProduto, quantidadeDeProduto, saldoEmEstoque, Cod_Cliente)"
+						+ " VALUES(?, ?, ?, ?, ?, ?)";
+				PreparedStatement preparedStatement1 = connection.prepareStatement(sql);
+				
+				preparedStatement1.setInt(1, idDoProduto);
+				preparedStatement1.setString(2, produto.getNomeDoProduto());
+				preparedStatement1.setDouble(3, produto.getPrecoDoProduto());
+				preparedStatement1.setInt(4, qtd);
+				preparedStatement1.setDouble(5, qtd * produto.getPrecoDoProduto());
+				preparedStatement1.setDouble(6, idCliente);
+				
+				preparedStatement1.execute();
+				
+				String sql3 = "UPDATE produtos SET quantidadeDeProduto = ?, saldoEmEstoque = ?"
+						+ " WHERE codigoDoProduto = ?";
+				preparedStatement = connection.prepareStatement(sql3);
+				
+				preparedStatement.setInt(1, produto.getQuantidadeDeProduto() - qtd);
+				preparedStatement.setDouble(2, produto.getPrecoDoProduto()*(produto.getQuantidadeDeProduto() - qtd));
+				preparedStatement.setInt(3, idDoProduto);
+				
+				preparedStatement.execute();
+			} catch (Exception e) {
+				System.out.println("erro ao transferir itens ao carrinho.");
+			}
 		}
 		return null;
 	}

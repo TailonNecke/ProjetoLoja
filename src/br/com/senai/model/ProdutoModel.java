@@ -7,6 +7,7 @@ public class ProdutoModel {
 	private double precoDoProduto;
 	private int quantidadeDeProduto;
 	private double saldoEmEstoque;
+	private int pedido;
 
 	// CONSTRUCTORS
 	public ProdutoModel() {
@@ -52,5 +53,12 @@ public class ProdutoModel {
 	public void setSaldoEmEstoque(double saldoEmEstoque) {
 		this.saldoEmEstoque = saldoEmEstoque;
 	}
+
+	public void setPedido(int int1) {
+		// TODO Auto-generated method stub
+		this.pedido = pedido;
+	}
+
+	
 
 }

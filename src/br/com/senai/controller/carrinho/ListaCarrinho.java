@@ -45,10 +45,10 @@ public class ListaCarrinho {
 		}
 	}
 	public ResultSet gerarCupom(int id) {
-		PreparedStatement preparedStatement = null;
-		PreparedStatement preparedStatement2 = null;
+		PreparedStatement preparedStatement;
 		try {
-			String sql = "select * from itens_carrinho where Cod_Cliente = ?";
+			System.out.println(id);
+			String sql = "select nome from clientes where cod_cliente = ?";
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -57,11 +57,19 @@ public class ListaCarrinho {
 				System.out.println("Não possui itens no carrinho");
 				return null;
 			}
-			String sql2 = "select nome from clientes where Cod_Cliente = ?";
-			preparedStatement2.setInt(1, id);
-			preparedStatement2 = connection.prepareStatement(sql2);
-			ResultSet resultSet2 = preparedStatement2.executeQuery();
-			System.out.println("Cliente: " + resultSet2.getString("nome"));
+			
+			System.out.println("Cliente: " + resultSet.getString("nome"));
+			
+			sql = "select * from itens_carrinho where Cod_Cliente = ?";
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, id);
+			resultSet = preparedStatement.executeQuery();
+			
+			if(!resultSet.next()) {
+				System.out.println("Não possui itens no carrinho");
+				return null;
+			}
+			
 			System.out.println("\n----- CUPOM -----\n");
 			System.out.printf("| %2s | %30s | %8s | %4s | %9s |\n", "ID", "Produto", "Preço", "Qtd", "R$ Total");
 						
@@ -81,6 +89,8 @@ public class ListaCarrinho {
 			}
 			return resultSet;
 		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("aaaaa");
 			return null;
 		}
 	}
