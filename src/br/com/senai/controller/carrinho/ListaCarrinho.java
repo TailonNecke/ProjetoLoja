@@ -47,7 +47,6 @@ public class ListaCarrinho {
 	public ResultSet gerarCupom(int id) {
 		PreparedStatement preparedStatement;
 		try {
-			System.out.println(id);
 			String sql = "select nome from clientes where cod_cliente = ?";
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, id);

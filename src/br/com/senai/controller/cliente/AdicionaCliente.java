@@ -17,7 +17,7 @@ private Connection connection;
 	}
 	public int definirCliente() throws Exception {
 		PreparedStatement preparedStatement;
-		PreparedStatement preparedStatement1;
+		
 		
 		System.out.print("Informe o nome do cliente: ");
 		String nome = entrada.next();
@@ -31,21 +31,27 @@ private Connection connection;
 			try {
 				sql = "INSERT INTO clientes (nome)"
 						+ " VALUES(?)";
-				preparedStatement1 = connection.prepareStatement(sql);
+				preparedStatement = connection.prepareStatement(sql);
 				
-				preparedStatement1.setString(1, nome);
+				preparedStatement.setString(1, nome);
 				
-				preparedStatement1.execute();
+				preparedStatement.execute();
+				sql = "SELECT cod_cliente FROM clientes WHERE nome = ?";
+				preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setString(1, nome);
+				resultSet = preparedStatement.executeQuery();
+				resultSet.next();
 				return resultSet.getInt("cod_cliente");
 			} catch (Exception e) {
-				return resultSet.getInt("cod_cliente");
+				e.printStackTrace();
+				return 0;
 			}
 		
 		} else {
 			System.out.println("usuario existente");
-			System.out.println(resultSet.getInt("cod_cliente"));
 			return resultSet.getInt("cod_cliente");
 			
 		}
+		
 	}
 }

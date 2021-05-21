@@ -74,7 +74,6 @@ public class AdicionaItemNoCarrinho {
 			Double see = resultSet.getDouble("saldoEmEstoque");
 			
 			try {
-				System.out.println(qtda + ", " + see);
 				String sql = "UPDATE itens_carrinho SET quantidadeDeProduto = ? , saldoEmEstoque = ? WHERE codigoDoProduto = ? and Cod_Cliente = ?";
 				PreparedStatement preparedStatement1 = connection.prepareStatement(sql);
 				
